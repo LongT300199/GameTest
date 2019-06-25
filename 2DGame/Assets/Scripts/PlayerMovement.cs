@@ -2,8 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PlayerState {
+	walk,
+	attack,
+	interact
+}
+
 public class PlayerMovement : MonoBehaviour {
 
+	public PlayerState currentState;
 	public float speed;
 	private Rigidbody2D playerRigidBody;
 	private Vector3 change;
@@ -12,8 +19,12 @@ public class PlayerMovement : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		currentState = PlayerState.walk;
 		playerRigidBody = GetComponent<Rigidbody2D>();
 		animator = GetComponent<Animator>();
+		// Set initial animator to down
+		animator.SetFloat("moveX", 0);
+		animator.SetFloat("moveY", -1);
 	}
 	
 	// Update is called once per frame
@@ -22,10 +33,11 @@ public class PlayerMovement : MonoBehaviour {
 		// GetAxisRaw removes smoothing from normal GetAxis
 		change.x = Input.GetAxisRaw("Horizontal");
 		change.y = Input.GetAxisRaw("Vertical");
-		if (Input.GetButtonDown("attack")) {
+		if (Input.GetButtonDown("attack") && currentState != PlayerState.attack) {
 			// atk
+		} else if (currentState == PlayerState.walk) {
+			UpdateAnimationAndMove();
 		}
-		UpdateAnimationAndMove();
 	}
 
 	void UpdateAnimationAndMove() {
@@ -43,6 +55,8 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
 	void MoveCharacter() {
+		// Normalize diagonal movement
+		change.Normalize();
 		playerRigidBody.MovePosition(
 			transform.position + change * speed * Time.deltaTime
 		);
