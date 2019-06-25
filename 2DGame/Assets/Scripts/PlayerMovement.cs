@@ -34,10 +34,21 @@ public class PlayerMovement : MonoBehaviour {
 		change.x = Input.GetAxisRaw("Horizontal");
 		change.y = Input.GetAxisRaw("Vertical");
 		if (Input.GetButtonDown("attack") && currentState != PlayerState.attack) {
-			// atk
+			StartCoroutine(AttackCo());
 		} else if (currentState == PlayerState.walk) {
 			UpdateAnimationAndMove();
 		}
+	}
+
+	private IEnumerator AttackCo() {
+		animator.SetBool("attacking", true);
+		currentState = PlayerState.attack;
+		// Wait 1 frame
+		yield return null;
+		animator.SetBool("attacking", false);
+		// Wait for animation duration
+		yield return new WaitForSeconds(.3f);
+		currentState = PlayerState.walk;
 	}
 
 	void UpdateAnimationAndMove() {
