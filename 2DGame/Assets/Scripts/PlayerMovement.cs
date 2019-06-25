@@ -22,6 +22,9 @@ public class PlayerMovement : MonoBehaviour {
 		// GetAxisRaw removes smoothing from normal GetAxis
 		change.x = Input.GetAxisRaw("Horizontal");
 		change.y = Input.GetAxisRaw("Vertical");
+		if (Input.GetButtonDown("attack")) {
+			// atk
+		}
 		UpdateAnimationAndMove();
 	}
 
